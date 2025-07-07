@@ -15,13 +15,29 @@ class blackjack:
 
         self.deck = ['A♣', '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', 'T♣', 'J♣', 'Q♣', 'K♣', 'A♦', '2♦', '3♦', '4♦', '5♦', '6♦', '7♦', '8♦', '9♦', 'T♦', 'J♦', 'Q♦', 'K♦', 'A♥', '2♥', '3♥', '4♥', '5♥', '6♥', '7♥', '8♥', '9♥', 'T♥', 'J♥', 'Q♥', 'K♥', 'A♠', '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', 'T♠', 'J♠', 'Q♠', 'K♠']
 
-    def deal_hand(self):
-        # for card in range(self.handsize):
-            
-            # self.player_hand.append(random.random())
-        self.player_hand = self.player_hand + random.sample(self.deck, k=2)
+    def game_state(self):
+        game = blackjack()
+        print('\n')
+        print('Dealers Hand:\n')
+        game.deal_hand('dealer')
+        print(game.dealer_hand)
 
-        print(self.player_hand)
+        print('\n')
+        
+        print('Your Hand:\n')
+        game.deal_hand('player')
+        print(game.player_hand)
+    
+    def deal_hand(self, actor):
+        for card in range(self.handsize):
+            rand_temp = random.randint(0,len(self.deck))
+            card_temp = self.deck.pop(rand_temp)
+            if actor == 'player':
+                self.player_hand.append(card_temp)
+            elif actor == 'dealer':
+                self.dealer_hand.append(card_temp)
+        # print(self.player_hand)
+        # return self
 
 
 # blackjack().deal_hand()
@@ -53,7 +69,7 @@ if __name__ == "__main__":
 
 
     if mode == 'blackjack':
-        blackjack().deal_hand()
+        blackjack().game_state()
     elif mode == 'poker':
         print("Under construction")
 

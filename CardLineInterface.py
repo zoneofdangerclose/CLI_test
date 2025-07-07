@@ -19,17 +19,24 @@ class blackjack:
         game = blackjack()
         print('\n')
         print('Dealers Hand:\n')
-        game.deal_hand('dealer')
+        game.deal_hand('dealer', 2)
         print(game.dealer_hand)
 
         print('\n')
         
         print('Your Hand:\n')
-        game.deal_hand('player')
+        game.deal_hand('player', 2)
         print(game.player_hand)
+
+        hit = input("Hit? (y/n) ")
+
+        if hit == "y":
+            print('hit')
+            game.deal_hand('player', 1)
+            print(game.player_hand)
     
-    def deal_hand(self, actor):
-        for card in range(self.handsize):
+    def deal_hand(self, actor, numcards):
+        for card in range(numcards):
             rand_temp = random.randint(0,len(self.deck))
             card_temp = self.deck.pop(rand_temp)
             if actor == 'player':

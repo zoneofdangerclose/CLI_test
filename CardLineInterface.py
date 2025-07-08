@@ -11,6 +11,17 @@ class blackjack:
         self.dealer_hand = []
         self.chip_count = []
 
+        self.player_hand_score = 0
+        self.dealer_hand_score = 0
+
+        self.card_rank_dict = {
+            'A': 11,
+            'K': 10,
+            'Q': 10,
+            'J': 10,
+            'T': 10,
+        }
+
         self.handsize = 2
 
         self.deck = ['A♣', '2♣', '3♣', '4♣', '5♣', '6♣', '7♣', '8♣', '9♣', 'T♣', 'J♣', 'Q♣', 'K♣', 'A♦', '2♦', '3♦', '4♦', '5♦', '6♦', '7♦', '8♦', '9♦', 'T♦', 'J♦', 'Q♦', 'K♦', 'A♥', '2♥', '3♥', '4♥', '5♥', '6♥', '7♥', '8♥', '9♥', 'T♥', 'J♥', 'Q♥', 'K♥', 'A♠', '2♠', '3♠', '4♠', '5♠', '6♠', '7♠', '8♠', '9♠', 'T♠', 'J♠', 'Q♠', 'K♠']
@@ -34,6 +45,27 @@ class blackjack:
             print('hit')
             game.deal_hand('player', 1)
             print(game.player_hand)
+
+        game.score_hand('player', game.player_hand)
+        game.score_hand('dealer', game.dealer_hand)
+
+        # print(game.player_hand_score)
+        # print(game.dealer_hand_score)
+
+        if game.dealer_hand_score > 21 and game.player_hand_score <=21:
+            print('Player wins!')
+        elif game.dealer_hand_score <= 21 and game.player_hand_score > 21:
+            print('Dealer wins!')
+        elif game.dealer_hand_score > 21 and game.player_hand_score > 21:
+            print('Draw!')
+        elif game.dealer_hand_score > game.player_hand_score:
+            print('Dealer wins!')
+        elif game.dealer_hand_score < game.player_hand_score:
+            print('Player wins!')
+        elif game.dealer_hand_score == game.player_hand_score:
+            print('Player wins!')
+
+        
     
     def deal_hand(self, actor, numcards):
         for card in range(numcards):
@@ -45,6 +77,25 @@ class blackjack:
                 self.dealer_hand.append(card_temp)
         # print(self.player_hand)
         # return self
+
+    def score_hand(self, actor, hand):
+        score = 0
+        for card in range(len(hand)):
+            # print(card)
+            rank = hand[card][0]
+            # print(rank)
+
+            if rank in self.card_rank_dict.keys():
+                rank_value = self.card_rank_dict[rank]
+                score = score + rank_value
+            else:
+                score = score + int(rank)
+            # print(score)
+
+        if actor == 'player':
+            self.player_hand_score =  self.player_hand_score + score
+        elif actor == 'dealer':
+            self.dealer_hand_score =  self.dealer_hand_score + score
 
 
 # blackjack().deal_hand()

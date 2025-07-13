@@ -1,6 +1,7 @@
 import argparse
 import random
 from thefuzz import process
+import copy
 
 
 
@@ -31,7 +32,9 @@ class blackjack:
         print('\n')
         print('Dealers Hand:\n')
         game.deal_hand('dealer', 2)
-        print(game.dealer_hand)
+        dealer_hand_shown = copy.copy(game.dealer_hand)
+        dealer_hand_shown[1] = "??"
+        print(dealer_hand_shown)
 
         print('\n')
         
@@ -44,10 +47,23 @@ class blackjack:
         if hit == "y":
             print('hit')
             game.deal_hand('player', 1)
-            print(game.player_hand)
+            # print(game.player_hand)
 
         game.score_hand('player', game.player_hand)
         game.score_hand('dealer', game.dealer_hand)
+
+        # \033 is the escape character (ASCII code 27 in octal).
+        # [2J clears the entire screen.
+        # [H moves the cursor to the top-left corner.
+        print("\033[2J\033[H")
+
+        print('\n')
+        print('Dealers Hand:\n')
+        print(game.dealer_hand)
+        print('\n')
+        
+        print('Your Hand:\n')
+        print(game.player_hand)
 
         # print(game.player_hand_score)
         # print(game.dealer_hand_score)
@@ -70,7 +86,11 @@ class blackjack:
     def deal_hand(self, actor, numcards):
         for card in range(numcards):
             rand_temp = random.randint(0,len(self.deck))
-            card_temp = self.deck.pop(rand_temp)
+            try:
+                card_temp = self.deck.pop(rand_temp)
+            except:
+                rand_temp = random.randint(0,len(self.deck))
+                card_temp = self.deck.pop(rand_temp)
             if actor == 'player':
                 self.player_hand.append(card_temp)
             elif actor == 'dealer':

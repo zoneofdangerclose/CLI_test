@@ -29,9 +29,10 @@ class blackjack:
 
     def game_state(self):
         game = blackjack()
+        # print(len(self.deck))
         print('\n')
         print('Dealers Hand:\n')
-        game.deal_hand('dealer', 2)
+        game.deal_hand('dealer', 2, deck=game.deck)
         dealer_hand_shown = copy.copy(game.dealer_hand)
         dealer_hand_shown[1] = "??"
         print(dealer_hand_shown)
@@ -39,18 +40,24 @@ class blackjack:
         print('\n')
         
         print('Your Hand:\n')
-        game.deal_hand('player', 2)
+        game.deal_hand('player', 2, deck=game.deck)
         print(game.player_hand)
 
         hit = input("Hit? (y/n) ")
 
         if hit == "y":
             print('hit')
-            game.deal_hand('player', 1)
+            game.deal_hand('player', 1, deck=game.deck)
             # print(game.player_hand)
 
         game.score_hand('player', game.player_hand)
         game.score_hand('dealer', game.dealer_hand)
+
+        game.dealer_logic(dealer_score = game.dealer_hand_score, player_score =game.player_hand_score, deck=game.deck)
+
+        # game.dealer_hand_score = 0
+        # game.score_hand('dealer', game.dealer_hand)
+
 
         # \033 is the escape character (ASCII code 27 in octal).
         # [2J clears the entire screen.
@@ -60,37 +67,59 @@ class blackjack:
         print('\n')
         print('Dealers Hand:\n')
         print(game.dealer_hand)
+        print(game.dealer_hand_score)
         print('\n')
         
         print('Your Hand:\n')
         print(game.player_hand)
+        print(game.player_hand_score)
 
         # print(game.player_hand_score)
         # print(game.dealer_hand_score)
 
         if game.dealer_hand_score > 21 and game.player_hand_score <=21:
+            print('Dealer Busts!')
             print('Player wins!')
         elif game.dealer_hand_score <= 21 and game.player_hand_score > 21:
+            print('Player Busts!')
             print('Dealer wins!')
         elif game.dealer_hand_score > 21 and game.player_hand_score > 21:
+            print('Double Bust!')
             print('Draw!')
         elif game.dealer_hand_score > game.player_hand_score:
             print('Dealer wins!')
         elif game.dealer_hand_score < game.player_hand_score:
             print('Player wins!')
         elif game.dealer_hand_score == game.player_hand_score:
-            print('Player wins!')
+            print('Draw!')
 
         
     
-    def deal_hand(self, actor, numcards):
+    def deal_hand(self, actor, numcards, deck):
         for card in range(numcards):
-            rand_temp = random.randint(0,len(self.deck))
-            try:
-                card_temp = self.deck.pop(rand_temp)
-            except:
-                rand_temp = random.randint(0,len(self.deck))
-                card_temp = self.deck.pop(rand_temp)
+            # rand_temp = random.randint(0,len(self.deck))
+            # try:
+            # card_temp = self.deck.pop(rand_temp)
+            # except:
+                # rand_temp = random.randint(0,len(self.deck))
+                # card_temp = self.deck.pop(rand_temp)
+            card_temp = random.choice(self.deck)
+            index_temp = self.deck.index(card_temp)
+            if index_temp in range(len(self.deck)):
+                # print(self.deck)
+                # print(len(self.deck))
+                # print(range(len(self.deck)))
+                # print(index_temp)
+                # print(card_temp)
+                self.deck.remove(card_temp)
+                # print(len(self.deck))
+            else:
+                print(card_temp)
+                print(self.deck.index(card_temp))
+            # self.deck = self.deck - card_temp
+            # self.deck = list(self.deck)
+            # self.deck.remove(card_temp)
+
             if actor == 'player':
                 self.player_hand.append(card_temp)
             elif actor == 'dealer':
@@ -100,9 +129,12 @@ class blackjack:
 
     def score_hand(self, actor, hand):
         score = 0
+        ace_in_hand = False
         for card in range(len(hand)):
             # print(card)
             rank = hand[card][0]
+            if rank == "A":
+                ace_in_hand = True
             # print(rank)
 
             if rank in self.card_rank_dict.keys():
@@ -111,12 +143,34 @@ class blackjack:
             else:
                 score = score + int(rank)
             # print(score)
+        if score > 21 and ace_in_hand:
+            score = score - 10
 
         if actor == 'player':
             self.player_hand_score =  self.player_hand_score + score
         elif actor == 'dealer':
             self.dealer_hand_score =  self.dealer_hand_score + score
 
+    def dealer_logic(self, dealer_score, player_score, deck):
+        
+
+        if dealer_score == 15:
+            self.deal_hand('dealer', 1, deck=self.deck)
+            self.dealer_hand_score = 0
+            self.score_hand('dealer', self.dealer_hand)
+
+        if dealer_score < player_score and dealer_score < 21:
+            self.deal_hand('dealer', 1, deck=self.deck)
+            self.dealer_hand_score = 0
+            self.score_hand('dealer', self.dealer_hand)
+
+        # finite = 3
+        # i = 0
+        # while dealer_score < 21 or dealer_score < player_score or i < finite:
+        #     self.dealer_hand_score = 0
+        #     self.deal_hand('dealer', 1, deck=self.deck)
+        #     self.score_hand('dealer', self.dealer_hand)
+        #     i += 1
 
 # blackjack().deal_hand()
 

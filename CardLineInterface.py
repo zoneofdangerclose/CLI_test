@@ -2,13 +2,34 @@ import argparse
 import random
 from thefuzz import process
 import copy
+import os
+import pandas as pd
 
 class bank:
     def __init__(self):
+        self.bank_df = pd.DataFrame()
         pass
 
-    def start_game(self, gametype):
-        pass
+    def start_game(self):
+        if os.path.exists('bank.csv') is False:
+            print('construcing bank')
+            bank_df = pd.DataFrame({
+                'username': ['guest'],
+                'blackjack chip count': [100],
+                'poker chip count': [100],
+            })
+
+            bank_df.to_csv('bank.csv', index=False)
+
+            self.bank_df = pd.read_csv('bank.csv')
+
+        elif os.path.exists('bank.csv') is True:
+            self.bank_df = pd.read_csv('bank.csv')
+
+    def updatechipcount(self, chipcount, username, game, bank_df):
+        bank_df.loc[bank_df['username'] == username, f'{game} chip count'] = [chipcount]
+        self.bank_df = bank_df
+        self.bank_df.to_csv('bank.csv', index=False)
 
 
 class blackjack:
@@ -35,6 +56,14 @@ class blackjack:
 
     def game_state(self):
         game = blackjack()
+        bank_instance = bank()
+        bank_instance.start_game()
+
+        username = 'guest'
+
+        chipcount = bank_instance.bank_df.loc[bank_instance.bank_df['username'] == username, 'blackjack chip count'][0]
+        bet = 10
+
         # print(len(self.deck))
         print('\n')
         print('Dealers Hand:\n')
@@ -48,6 +77,8 @@ class blackjack:
         print('Your Hand:\n')
         game.deal_hand('player', 2, deck=game.deck)
         print(game.player_hand)
+        print(f'Chip Count\n{chipcount}')
+        print(f'Bet\n{bet}')
 
         hit = input("Hit? (y/n) ")
 
@@ -82,22 +113,40 @@ class blackjack:
 
         # print(game.player_hand_score)
         # print(game.dealer_hand_score)
-
+        playerwins = False
+        playerdraw = False
         if game.dealer_hand_score > 21 and game.player_hand_score <=21:
             print('Dealer Busts!')
             print('Player wins!')
+            playerwins = True
         elif game.dealer_hand_score <= 21 and game.player_hand_score > 21:
             print('Player Busts!')
             print('Dealer wins!')
         elif game.dealer_hand_score > 21 and game.player_hand_score > 21:
             print('Double Bust!')
             print('Draw!')
+            playerdraw = True
         elif game.dealer_hand_score > game.player_hand_score:
             print('Dealer wins!')
         elif game.dealer_hand_score < game.player_hand_score:
             print('Player wins!')
+            playerwins = True
         elif game.dealer_hand_score == game.player_hand_score:
             print('Draw!')
+            playerdraw = True
+
+        if playerwins == True:
+            chipcount = chipcount + bet
+        elif playerdraw == True:
+            pass
+        else:
+            chipcount = chipcount - bet
+
+        # print(chipcount)
+
+        bank_instance.updatechipcount(chipcount, username, game = 'blackjack', bank_df= bank_instance.bank_df)
+
+
 
     def deal_hand(self, actor, numcards, deck):
         for card in range(numcards):

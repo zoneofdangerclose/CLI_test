@@ -3,6 +3,12 @@ import random
 from thefuzz import process
 import copy
 
+class bank:
+    def __init__(self):
+        pass
+
+    def start_game(self, gametype):
+        pass
 
 
 class blackjack:
@@ -10,7 +16,7 @@ class blackjack:
     def __init__(self):
         self.player_hand = []
         self.dealer_hand = []
-        self.chip_count = []
+        # self.chip_count = []
 
         self.player_hand_score = 0
         self.dealer_hand_score = 0
@@ -93,8 +99,6 @@ class blackjack:
         elif game.dealer_hand_score == game.player_hand_score:
             print('Draw!')
 
-        
-    
     def deal_hand(self, actor, numcards, deck):
         for card in range(numcards):
             # rand_temp = random.randint(0,len(self.deck))
@@ -171,6 +175,8 @@ class blackjack:
         #     self.deal_hand('dealer', 1, deck=self.deck)
         #     self.score_hand('dealer', self.dealer_hand)
         #     i += 1
+
+
 
 # blackjack().deal_hand()
 
